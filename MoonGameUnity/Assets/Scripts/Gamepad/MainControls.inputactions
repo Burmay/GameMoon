@@ -1,0 +1,54 @@
+{
+    "name": "MainControls",
+    "maps": [
+        {
+            "name": "ActionsPlayerMap",
+            "id": "eb43987b-eddd-47c9-8075-54ac9d9a39fb",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "d9d4e1c2-c4d2-4de2-b43c-66f04c788dbc",
+                    "expectedControlType": "Stick",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Mode",
+                    "type": "Button",
+                    "id": "946a74b0-45bb-43c2-b0c5-5b89ac952725",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "0f4145ed-eb31-4635-b6f6-54c106430fd2",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c5d374cd-033d-4d7a-9a63-24f11d548323",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Mode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
