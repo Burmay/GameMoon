@@ -5,32 +5,37 @@ using UnityEngine.InputSystem;
 
 public class PlayerControllerGamepad : MonoBehaviour
 {
-    MainControls controls;
+    Rigidbody2D rigidbody2D;
+    PlayerControls controls;
     PlayerController playerController;
     Vector2 move;
     bool mode;
-    float currentReloadChangeMode;
     bool isReloadMode;
-    public float reloadChangeMode;
-    public float turnOnMode;
+    public float reloadChangeMode, turnOnMode;
+    Vector2 _prevPos, _newPos;
 
-    public PlayerControllerGamepad()
+    public void Start()
     {
+        _prevPos = transform.position;
+        _newPos = transform.position;
+        playerController = new PlayerController(_prevPos, _newPos);
+
         mode = false;
         isReloadMode = false;
         reloadChangeMode = 1;
         turnOnMode = 0.5f;
 
-        controls = new MainControls();
-        controls.ActionsPlayerMap.Mode.performed += cts => ChangeMode();
-        controls.ActionsPlayerMap.Move.performed += ctx => move = ctx.ReadValue<Vector2>();
-        controls.ActionsPlayerMap.Move.canceled += ctx => move = Vector2.zero;
+        rigidbody2D = new Rigidbody2D();
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D.rotation = -90;
     }
 
-    public void Init(PlayerController playerController)
+    public void Awake()
     {
-        Debug.Log("Приняли");
-        this.playerController = playerController;
+        controls = new PlayerControls();
+        controls.Gameplay.ChangeMode.performed += cts => ChangeMode();
+        controls.Gameplay.Move.performed += ctx => move = ctx.ReadValue<Vector2>();
+        controls.Gameplay.Move.canceled += ctx => move = Vector2.zero;
     }
 
 
@@ -38,21 +43,24 @@ public class PlayerControllerGamepad : MonoBehaviour
     {
         if(isReloadMode == true)
         {
-            mode = true;
+            if(mode == true) { mode = false; Debug.Log("MODE OFF");}
+            else { mode = true; Debug.Log("MODE ON"); }
             isReloadMode = false;
-            currentReloadChangeMode = 0;
-
+            reloadChangeMode = 0;
         }
     }
 
     void ReloadChangeMode()
     {
+        if(reloadChangeMode > 1)
+        {
+            isReloadMode = true;
+        }
         reloadChangeMode += Time.fixedDeltaTime;
     }
 
     public void FixedUpdate()
     {
-            Debug.Log(move.x + " " + move.y);
             if (move.x != 0)
             {
                 Turn();
@@ -72,17 +80,25 @@ public class PlayerControllerGamepad : MonoBehaviour
             {
                 ReloadChangeMode();
             }
+
+            if(playerController._speed + 0.1 > playerController._maxSpeed && mode == false)
+            {
+                Deceleration();
+        }
     }
 
     void Turn()
     {
+        float currentTurn;
         if (mode == false)
         {
-            playerController.Turn(move.x);
+            currentTurn = playerController.Turn(move.x);
+            rigidbody2D.rotation += currentTurn;
         }
         else
         {
-            playerController.Turn(move.x * turnOnMode);
+            currentTurn = playerController.Turn(move.x);
+            rigidbody2D.rotation += currentTurn;
         }
     }
 
@@ -90,13 +106,27 @@ public class PlayerControllerGamepad : MonoBehaviour
     {
         if (mode == false)
         {
-            playerController.Riding(move.y);
+            rigidbody2D.MovePosition(playerController.Riding(move.y, false) * (Vector2)transform.right + (Vector2)transform.position);
+        }
+        else
+        {
+            rigidbody2D.MovePosition(playerController.Riding(move.y, true) * (Vector2)transform.right + (Vector2)transform.position);
         }
     }
 
     void Deceleration()
     {
-        playerController.Deceleration();
+        rigidbody2D.MovePosition(playerController.Deceleration() * (Vector2)transform.right + (Vector2)transform.position);
+    }
+
+    void OnEnable()
+    {
+        controls.Gameplay.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Gameplay.Disable();
     }
 
 }

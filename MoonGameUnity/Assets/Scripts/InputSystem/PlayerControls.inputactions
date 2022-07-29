@@ -1,23 +1,23 @@
 {
-    "name": "MainControls",
+    "name": "PlayerControls",
     "maps": [
         {
-            "name": "ActionsPlayerMap",
-            "id": "eb43987b-eddd-47c9-8075-54ac9d9a39fb",
+            "name": "Gameplay",
+            "id": "323de9c5-829b-4c89-b4a9-970aaf7686ac",
             "actions": [
                 {
                     "name": "Move",
                     "type": "Value",
-                    "id": "d9d4e1c2-c4d2-4de2-b43c-66f04c788dbc",
+                    "id": "27cb9485-1cf9-4954-beb2-0ff8396ae73f",
                     "expectedControlType": "Stick",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Mode",
+                    "name": "ChangeMode",
                     "type": "Button",
-                    "id": "946a74b0-45bb-43c2-b0c5-5b89ac952725",
+                    "id": "a8bd1702-7fd6-4f0c-bee0-7a73061bf266",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -27,7 +27,7 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "0f4145ed-eb31-4635-b6f6-54c106430fd2",
+                    "id": "865f18ac-b85a-4035-9d01-dda422fd2101",
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
@@ -38,12 +38,12 @@
                 },
                 {
                     "name": "",
-                    "id": "c5d374cd-033d-4d7a-9a63-24f11d548323",
+                    "id": "789c0ea8-247a-4814-bad4-0345f81a2558",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Mode",
+                    "action": "ChangeMode",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
