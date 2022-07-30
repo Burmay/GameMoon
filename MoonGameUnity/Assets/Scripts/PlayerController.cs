@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController
 {
-    public float _speed, _acceleration, _maxSpeed, _maxTurnSpeed, _currentTurnSpeed, _turnBunus, _maxDashReloadTime, _currentdashReloadTime, _dashDistance, _stopBonus, _speedMode, _accMode;
+    public float _speed, _acceleration, _maxSpeed, _maxTurnSpeed, _currentTurnSpeed, _turnBunus, _maxDashReloadTime, _currentdashReloadTime, _dashDistance, _stopBonus, maxAccSpeed, _accMode, minSizeCam, maxSizeCam, camCurrentSize, CamDeepSpeed ;
     bool _isDashReloadTime, _isDash;
     Vector3 mousePosition;
     Accelerator accelerator;
@@ -18,8 +18,9 @@ public class PlayerController
     bool _prevDir, _newDir;
 
     Vector2 move;
+    GameObject cameraTag;
+    FallowCamera fallowCamera;
 
-    //[SerializeField] NavigationBar;
 
     public PlayerController(Vector2 prevPos, Vector2 newPos)
     {
@@ -35,8 +36,15 @@ public class PlayerController
         accelerator = new Accelerator();
         _dashDistance = 10;
         _stopBonus = 4;
-        _speedMode = 5;
+        maxAccSpeed = 50;
         _accMode = 1.5f;
+        minSizeCam = 15;
+        maxSizeCam = 50;
+        CamDeepSpeed = 2;
+
+        cameraTag = GameObject.FindGameObjectWithTag("MainCamera");
+        fallowCamera = cameraTag.GetComponent<FallowCamera>();
+        camCurrentSize = Camera.main.orthographicSize;
     }
 
     public float Turn(float x)
@@ -97,7 +105,7 @@ public class PlayerController
                 }
                 else
                 {
-                    _speed += accelerator.FastStart(_acceleration * _accMode, _maxSpeed * _speedMode, _speed, y);
+                    _speed += accelerator.FastStart(_acceleration * _accMode, maxAccSpeed, _speed, y);
                 }
                 _prevDir = _newDir;
                 return -_speed * Time.fixedDeltaTime;
@@ -127,7 +135,7 @@ public class PlayerController
                 }
                 else
                 {
-                    _speed += accelerator.FastStart(_acceleration * _accMode, _maxSpeed * _speedMode, _speed, y);
+                    _speed += accelerator.FastStart(_acceleration * _accMode, maxAccSpeed, _speed, y);
                 }
                 _prevDir = _newDir;
                 return _speed * Time.fixedDeltaTime;
@@ -149,6 +157,23 @@ public class PlayerController
         {
             return _speed * Time.fixedDeltaTime;
         }
+    }
+
+    public void ChangeSizeCamera()
+    {
+        if(camCurrentSize < _speed / maxAccSpeed * maxSizeCam)
+        {
+            camCurrentSize += CamDeepSpeed * Time.fixedDeltaTime;
+        }
+        else
+        {
+            camCurrentSize -= CamDeepSpeed * Time.fixedDeltaTime * 3;
+        }
+        if(camCurrentSize < minSizeCam)
+        {
+            camCurrentSize = minSizeCam;
+        }
+        Camera.main.orthographicSize = camCurrentSize;
     }
 
 }

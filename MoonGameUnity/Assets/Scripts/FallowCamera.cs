@@ -23,6 +23,7 @@ public class FallowCamera : MonoBehaviour
     {
         Vector3 cameraPos = playerTag.transform.position;
         cameraPos.z = -10;
+        cameraPos.y += 3;
         transform.position = cameraPos;
         CameraTurn();
         //transform.position = Vector3.Lerp(transform.position, target.position + offset, Time.deltaTime * smooth);
@@ -32,5 +33,6 @@ public class FallowCamera : MonoBehaviour
     public void CameraTurn()
     {
          transform.rotation = Quaternion.Slerp(transform.rotation, playerTag.transform.rotation, cameraTurnSpeed * Time.fixedDeltaTime);
+
     }
 }

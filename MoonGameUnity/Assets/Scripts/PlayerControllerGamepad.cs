@@ -61,29 +61,35 @@ public class PlayerControllerGamepad : MonoBehaviour
 
     public void FixedUpdate()
     {
-            if (move.x != 0)
-            {
-                Turn();
-            }
+        Move();
+        playerController.ChangeSizeCamera();
+    }
 
-            if (move.y != 0)
-            {
-                Riding();
-            }
+    void Move()
+    {
+        if (move.x != 0)
+        {
+            Turn();
+        }
 
-            else
-            {
-                Deceleration();
-            }
+        if (move.y != 0)
+        {
+            Riding();
+        }
 
-            if (isReloadMode == false)
-            {
-                ReloadChangeMode();
-            }
+        else
+        {
+            Deceleration();
+        }
 
-            if(playerController._speed + 0.1 > playerController._maxSpeed && mode == false)
-            {
-                Deceleration();
+        if (isReloadMode == false)
+        {
+            ReloadChangeMode();
+        }
+
+        if (playerController._speed + 0.1 > playerController._maxSpeed && mode == false)
+        {
+            Deceleration();
         }
     }
 
