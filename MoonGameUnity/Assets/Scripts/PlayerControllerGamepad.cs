@@ -8,6 +8,7 @@ public class PlayerControllerGamepad : MonoBehaviour
     Rigidbody2D rigidbody2D;
     PlayerControls controls;
     PlayerController playerController;
+    GameObject playerTag;
     Vector2 move;
     bool mode;
     bool isReloadMode;
@@ -18,7 +19,11 @@ public class PlayerControllerGamepad : MonoBehaviour
     {
         _prevPos = transform.position;
         _newPos = transform.position;
-        playerController = new PlayerController(_prevPos, _newPos);
+
+        playerTag = GameObject.FindGameObjectWithTag("PlayerController");
+        playerController = playerTag.GetComponent<PlayerController>();
+
+        playerController.SetStartPos(_prevPos, _newPos);
 
         mode = false;
         isReloadMode = false;
@@ -81,6 +86,8 @@ public class PlayerControllerGamepad : MonoBehaviour
         {
             Deceleration();
         }
+
+
 
         if (isReloadMode == false)
         {

@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 // Проверки на противоположные клавиши
 
-public class PlayerController
+public class PlayerController : MonoBehaviour
 {
     public float _speed, _acceleration, _maxSpeed, _maxTurnSpeed, _currentTurnSpeed, _turnBunus, _maxDashReloadTime, _currentdashReloadTime, _dashDistance, _stopBonus, maxAccSpeed, _accMode, minSizeCam, maxSizeCam, camCurrentSize, CamDeepSpeed ;
     bool _isDashReloadTime, _isDash;
@@ -21,8 +21,7 @@ public class PlayerController
     GameObject cameraTag;
     FallowCamera fallowCamera;
 
-
-    public PlayerController(Vector2 prevPos, Vector2 newPos)
+    public void Start()
     {
         _speed = 0;
         _maxTurnSpeed = 45;
@@ -45,6 +44,11 @@ public class PlayerController
         cameraTag = GameObject.FindGameObjectWithTag("MainCamera");
         fallowCamera = cameraTag.GetComponent<FallowCamera>();
         camCurrentSize = Camera.main.orthographicSize;
+    }
+    public void SetStartPos(Vector2 prevPos, Vector2 newPos)
+    {
+        _prevPos = prevPos;
+        _newPos = newPos;
     }
 
     public float Turn(float x)
