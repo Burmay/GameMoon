@@ -23,7 +23,6 @@ public class FallowCamera : MonoBehaviour
     {
         Vector3 cameraPos = playerTag.transform.position;
         cameraPos.z = -10;
-        cameraPos.y += 3;
         transform.position = cameraPos;
         CameraTurn();
 

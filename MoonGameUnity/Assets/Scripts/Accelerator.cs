@@ -3,16 +3,14 @@ using System;
 
 public class Accelerator
 {
-    public float LineBreak(float acceleration, float currentSpeed, float y = 1)
+    public float NullSpeed(float acceleration, float currentSpeed)
     {
-        if (Math.Sign(acceleration * Time.fixedDeltaTime * Math.Sign(currentSpeed)) != Math.Sign(currentSpeed) )
-        {
-            return 0;
-        }
-        else
-        {
-            return acceleration * Time.fixedDeltaTime * Math.Sign(currentSpeed) * Math.Abs(y);
-        }
+        return -acceleration * Time.fixedDeltaTime * Math.Sign(currentSpeed);
+    }
+
+    public float LineBreak(float acceleration, float y)
+    {
+        return acceleration * Time.fixedDeltaTime * y;
     }
 
     public float FastStart(float acceleration, float maxSpeed, float currentSpeed, float y)
@@ -21,11 +19,11 @@ public class Accelerator
         {
             if (maxSpeed - Math.Abs(currentSpeed) > acceleration)
             {
-                return acceleration * Time.fixedDeltaTime * -y;
+                return acceleration * Time.fixedDeltaTime * y;
             }
             else
             {
-                return (maxSpeed - Math.Abs(currentSpeed)) * Time.fixedDeltaTime * -y;
+                return (maxSpeed - Math.Abs(currentSpeed)) * Time.fixedDeltaTime * y;
             }
         }
         else
@@ -36,13 +34,13 @@ public class Accelerator
 
     public float FastBreak(float acceleration, float currentSpeed, float maxAccSpeed, float y)
     {
-        if(Math.Abs(currentSpeed) > maxAccSpeed / 2)
+        if (Math.Abs(currentSpeed) > maxAccSpeed / 2)
         {
-            return Math.Abs(currentSpeed) / maxAccSpeed * acceleration * Time.fixedDeltaTime * Math.Abs(y);
+            return (Math.Abs(currentSpeed) / maxAccSpeed) * acceleration * Time.fixedDeltaTime * y;
         }
         else
         {
-            return - LineBreak(acceleration,currentSpeed,y);
+            return LineBreak(acceleration, y);
         }
     }
 }

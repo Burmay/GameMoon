@@ -22,8 +22,6 @@ public class PlayerControllerGamepad : MonoBehaviour
         playerTag = GameObject.FindGameObjectWithTag("PlayerController");
         playerController = playerTag.GetComponent<PlayerController>();
 
-        playerController.SetStartPos(_prevPos, _newPos);
-
         mode = false;
         isReloadMode = false;
         reloadChangeMode = 1;
@@ -67,10 +65,7 @@ public class PlayerControllerGamepad : MonoBehaviour
 
     void Move()
     {
-        if (move.x != 0)
-        {
-            playerController.Turn(move.x);
-        }
+        playerController.Turn(move.x);
 
         if (move.y != 0)
         {

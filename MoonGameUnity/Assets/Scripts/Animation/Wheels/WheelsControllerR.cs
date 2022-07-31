@@ -14,18 +14,8 @@ public class WheelsControllerR : UniversalWheels
 
     void Update()
     {
-        SpeedRotation();
+        animator.SetFloat("speed", playerController.speed * animationSpeedMultiplier);
     }
 
-    void SpeedRotation()
-    {
-        if (base.playerController.speed == 0)
-        {
-            animator.speed = 0;
-        }
-        else
-        {
-            animator.speed = playerController.speed * 1.25f;
-        }
-    }
+
 }
