@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerControllerGamepad : MonoBehaviour
 {
-    Rigidbody2D rigidbody2D;
     PlayerControls controls;
     PlayerController playerController;
     GameObject playerTag;
@@ -29,10 +28,6 @@ public class PlayerControllerGamepad : MonoBehaviour
         isReloadMode = false;
         reloadChangeMode = 1;
         turnOnMode = 0.5f;
-
-        rigidbody2D = new Rigidbody2D();
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        rigidbody2D.rotation = -90;
     }
 
     public void Awake()
@@ -74,19 +69,18 @@ public class PlayerControllerGamepad : MonoBehaviour
     {
         if (move.x != 0)
         {
-            Turn();
+            playerController.Turn(move.x);
         }
 
         if (move.y != 0)
         {
-            Riding();
+            playerController.Riding(move.y, mode);
         }
 
         else
         {
-            Deceleration();
+            playerController.Deceleration();
         }
-
 
 
         if (isReloadMode == false)
@@ -94,42 +88,6 @@ public class PlayerControllerGamepad : MonoBehaviour
             ReloadChangeMode();
         }
 
-        if (playerController._speed + 0.1 > playerController._maxSpeed && mode == false)
-        {
-            Deceleration();
-        }
-    }
-
-    void Turn()
-    {
-        float currentTurn;
-        if (mode == false)
-        {
-            currentTurn = playerController.Turn(move.x);
-            rigidbody2D.rotation += currentTurn;
-        }
-        else
-        {
-            currentTurn = playerController.Turn(move.x);
-            rigidbody2D.rotation += currentTurn;
-        }
-    }
-
-    void Riding()
-    {
-        if (mode == false)
-        {
-            rigidbody2D.MovePosition(playerController.Riding(move.y, false) * (Vector2)transform.right + (Vector2)transform.position);
-        }
-        else
-        {
-            rigidbody2D.MovePosition(playerController.Riding(move.y, true) * (Vector2)transform.right + (Vector2)transform.position);
-        }
-    }
-
-    void Deceleration()
-    {
-        rigidbody2D.MovePosition(playerController.Deceleration() * (Vector2)transform.right + (Vector2)transform.position);
     }
 
     void OnEnable()

@@ -3,29 +3,29 @@ using System;
 
 public class Accelerator
 {
-    public float LineAcceleration(float acceleration, float maxSpeed, bool backmove, float currentSpeed = 0.1f)
+    public float LineBreak(float acceleration, float currentSpeed, float y = 1)
     {
-        if (currentSpeed < maxSpeed || backmove == true)
-        {
-            return acceleration * Time.fixedDeltaTime;
-        }
-        else
+        if (Math.Sign(acceleration * Time.fixedDeltaTime * Math.Sign(currentSpeed)) != Math.Sign(currentSpeed) )
         {
             return 0;
         }
+        else
+        {
+            return acceleration * Time.fixedDeltaTime * Math.Sign(currentSpeed) * Math.Abs(y);
+        }
     }
 
-    public float FastStart(float acceleration, float maxSpeed, float currentSpeed = 0.1f, float y = 1f)
+    public float FastStart(float acceleration, float maxSpeed, float currentSpeed, float y)
     {
-        if (currentSpeed < maxSpeed)
+        if (Math.Abs(currentSpeed) < maxSpeed)
         {
-            if (maxSpeed - currentSpeed > acceleration)
+            if (maxSpeed - Math.Abs(currentSpeed) > acceleration)
             {
-                return Math.Abs(acceleration * Time.fixedDeltaTime * Math.Abs(y));
+                return acceleration * Time.fixedDeltaTime * -y;
             }
             else
             {
-                return Math.Abs((maxSpeed - currentSpeed) * Time.fixedDeltaTime * Math.Abs(y));
+                return (maxSpeed - Math.Abs(currentSpeed)) * Time.fixedDeltaTime * -y;
             }
         }
         else
@@ -34,15 +34,15 @@ public class Accelerator
         }
     }
 
-    public float FastBreak(float acceleration, float maxSpeed, float currentSpeed = 0.1f, float y = 1f)
+    public float FastBreak(float acceleration, float currentSpeed, float maxAccSpeed, float y)
     {
-        if (currentSpeed < maxSpeed)
+        if(Math.Abs(currentSpeed) > maxAccSpeed / 2)
         {
-            return FastStart(acceleration, maxSpeed, currentSpeed, Math.Abs(y));
+            return Math.Abs(currentSpeed) / maxAccSpeed * acceleration * Time.fixedDeltaTime * Math.Abs(y);
         }
         else
         {
-            return Math.Abs(acceleration * Time.fixedDeltaTime * Math.Abs(y));
+            return - LineBreak(acceleration,currentSpeed,y);
         }
     }
 }

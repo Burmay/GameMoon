@@ -8,33 +8,35 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public float _speed, _acceleration, _maxSpeed, _maxTurnSpeed, _currentTurnSpeed, _turnBunus, _maxDashReloadTime, _currentdashReloadTime, _dashDistance, _stopBonus, maxAccSpeed, _accMode, minSizeCam, maxSizeCam, camCurrentSize, CamDeepSpeed ;
+    public float speed, _acceleration, _maxSpeed, _maxTurnSpeed, _currentTurnSpeed, _turnBunus, _maxDashReloadTime, _currentdashReloadTime, _dashDistance, _stopBonus, maxAccSpeed, _accMode, minSizeCam, maxSizeCam, camCurrentSize, CamDeepSpeed ;
     bool _isDashReloadTime, _isDash;
     Vector3 mousePosition;
     Accelerator accelerator;
 
     // Слежение за скоростью
     Vector2 _prevPos, _newPos;
-    bool _prevDir, _newDir;
 
     Vector2 move;
     GameObject cameraTag;
     FallowCamera fallowCamera;
+    Rigidbody2D rigidbody2D;
 
     public void Start()
     {
-        _speed = 0;
+        rigidbody2D = new Rigidbody2D();
+
+        rigidbody2D = GetComponent<Rigidbody2D>();
+        rigidbody2D.rotation = -90;
+
+        speed = 0;
         _maxTurnSpeed = 45;
         _turnBunus = 2;
         _maxSpeed = 10;
         _acceleration = 5;
         _maxDashReloadTime = 1;
-
-        _prevDir = true;
-        _newDir = false;
         accelerator = new Accelerator();
         _dashDistance = 10;
-        _stopBonus = 4;
+        _stopBonus = 2;
         maxAccSpeed = 50;
         _accMode = 1.5f;
         minSizeCam = 15;
@@ -51,121 +53,116 @@ public class PlayerController : MonoBehaviour
         _newPos = newPos;
     }
 
-    public float Turn(float x)
+    public void Turn(float x)
     {
-        _currentTurnSpeed = _maxTurnSpeed * _speed / _maxSpeed;
+        if (Math.Abs(speed) < _maxSpeed)
+        {
+            _currentTurnSpeed = _maxTurnSpeed * Math.Abs(speed) / _maxSpeed;
+        }
+        else
+        {
+            _currentTurnSpeed = _maxTurnSpeed;
+        }
 
         if (x > 0.5)
         {
-            if (_speed != 0)
+            if (speed != 0)
             {
-                return -Time.deltaTime * _maxTurnSpeed * x;
+                rigidbody2D.rotation += -Time.deltaTime * _currentTurnSpeed * x;
             }
             else
             {
-                return -Time.deltaTime * _maxTurnSpeed * _turnBunus * x;
+                rigidbody2D.rotation += -Time.deltaTime * _maxTurnSpeed * _turnBunus * x;
             }
         }
         if (x < -0.5)
         {
-            if (_speed != 0)
+            if (speed != 0)
             {
-                return Time.deltaTime * _maxTurnSpeed * -x;
+                rigidbody2D.rotation += Time.deltaTime * _currentTurnSpeed * -x;
             }
             else
             {
-                return Time.deltaTime * _maxTurnSpeed * _turnBunus * -x;
-
+                rigidbody2D.rotation += Time.deltaTime * _maxTurnSpeed * _turnBunus * -x;
             }
         }
-        return 0;
     }
 
-    public float Riding(float y, bool mode)
+    public void Riding(float y, bool mode)
     {
-        Debug.Log(_speed);
-        if (y > 0)
+        Debug.Log(speed);
+        if(speed == 0)
         {
-            _newDir = true;
-            if (_newDir != _prevDir)
+            if (y > 0)
             {
-                
-                if(mode == true || _speed + 1 > _maxSpeed)
-                {
-                    _speed -= accelerator.FastBreak(_acceleration * _stopBonus * _accMode, _maxSpeed, _speed, y);
-                }
-                else
-                {
-                    _speed -= accelerator.FastStart(_acceleration * _stopBonus, _maxSpeed * _stopBonus, _speed, y);
-                }
-                if (_speed < 0.15f) { _speed = 0; _prevDir = _newDir; }
-                return _speed * Time.fixedDeltaTime;
+                speed = -0.1f;
             }
             else
             {
-                if (mode == false)
+                speed = 0.1f;
+            }
+        }
+        if (y > 0)
+        {
+            if (mode == true)
+            {
+                if (speed < 0)
                 {
-                    _speed += accelerator.FastStart(_acceleration, _maxSpeed, _speed, y);
+                    speed += accelerator.FastStart(_accMode * _acceleration, maxAccSpeed, speed, y);
                 }
                 else
                 {
-                    _speed += accelerator.FastStart(_acceleration * _accMode, maxAccSpeed, _speed, y);
+                    speed += accelerator.FastBreak(_accMode * _acceleration * _stopBonus, speed, maxAccSpeed, y);
                 }
-                _prevDir = _newDir;
-                return -_speed * Time.fixedDeltaTime;
             }
+            else if(speed > 0 || speed > _maxSpeed)
+            {
+                speed -= accelerator.LineBreak(_acceleration * _accMode * _stopBonus, speed);
+            }
+            else
+            {
+                speed += accelerator.FastStart(_acceleration, _maxSpeed * _stopBonus, speed, y);
+                if (Math.Abs(speed) > _maxSpeed) { speed = -_maxSpeed; }
+            }
+            rigidbody2D.MovePosition(speed * (Vector2)transform.right * Time.fixedDeltaTime + (Vector2)transform.position); 
         }
         else if (y < 0)
         {
-            _newDir = false;
-            if (_newDir != _prevDir)
+            if (mode == true)
             {
-                if(mode == true || _speed + 1 > _maxSpeed)
+                if (speed > 0)
                 {
-                    _speed -= accelerator.FastBreak(_acceleration * _stopBonus * _accMode, _maxSpeed, _speed, y);
+                    speed += accelerator.FastStart(_accMode * _acceleration, maxAccSpeed, speed, y);
                 }
                 else
                 {
-                    _speed -= accelerator.FastStart(_acceleration * _stopBonus, _maxSpeed * _stopBonus, _speed, y);
+                    speed += accelerator.FastBreak(_accMode * _acceleration * _stopBonus, speed, maxAccSpeed, y);
                 }
-                if (_speed < 0.15f) { _speed = 0; _prevDir = _newDir; }
-                return -_speed * Time.fixedDeltaTime;
+            }
+            else if (speed < 0 || Math.Abs(speed) > _maxSpeed)
+            {
+                speed -= accelerator.LineBreak(_acceleration * _stopBonus * _accMode, speed);
             }
             else
             {
-                if (mode == false)
-                {
-                    _speed += accelerator.FastStart(_acceleration, _maxSpeed, _speed, y);
-                }
-                else
-                {
-                    _speed += accelerator.FastStart(_acceleration * _accMode, maxAccSpeed, _speed, y);
-                }
-                _prevDir = _newDir;
-                return _speed * Time.fixedDeltaTime;
+                speed += accelerator.FastStart(_acceleration, _maxSpeed * _stopBonus, speed, y);
+                if(Math.Abs(speed) > _maxSpeed) { speed = _maxSpeed; }
             }
+            rigidbody2D.MovePosition(speed * (Vector2)transform.right * Time.fixedDeltaTime + (Vector2)transform.position);
         }
-        return 0;
     }
 
-    public float Deceleration()
+    public void Deceleration()
     {
-        if (_speed == 0) { return 0;}
-        _speed -= accelerator.LineAcceleration(_acceleration * _stopBonus, _maxSpeed, true, _speed);
-        if (_speed < 0.15f) { _speed = 0; }
-        if (_newDir == true)
-        {
-            return -_speed * Time.fixedDeltaTime;
-        }
-        else
-        {
-            return _speed * Time.fixedDeltaTime;
-        }
+
+        speed += accelerator.LineBreak(_acceleration * _stopBonus, -speed);
+        if(speed < 0.15f && speed > -0.15f) { speed = 0; }
+            rigidbody2D.MovePosition(speed * Time.fixedDeltaTime * (Vector2)transform.right + (Vector2)transform.position);
     }
 
     public void ChangeSizeCamera()
     {
-        if(camCurrentSize < _speed / maxAccSpeed * maxSizeCam)
+        if(camCurrentSize < Math.Abs(speed) / maxAccSpeed * maxSizeCam)
         {
             camCurrentSize += CamDeepSpeed * Time.fixedDeltaTime;
         }

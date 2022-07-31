@@ -26,7 +26,6 @@ public class FallowCamera : MonoBehaviour
         cameraPos.y += 3;
         transform.position = cameraPos;
         CameraTurn();
-        //transform.position = Vector3.Lerp(transform.position, target.position + offset, Time.deltaTime * smooth);
 
     }
 

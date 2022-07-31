@@ -19,6 +19,13 @@ public class WheelsControllerR : UniversalWheels
 
     void SpeedRotation()
     {
-        animator.speed = 0;
+        if (base.playerController.speed == 0)
+        {
+            animator.speed = 0;
+        }
+        else
+        {
+            animator.speed = playerController.speed * 1.25f;
+        }
     }
 }
