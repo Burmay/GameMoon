@@ -16,7 +16,7 @@ public class FallowCamera : MonoBehaviour
         offset = transform.position - player.transform.position;
 
         playerTag = GameObject.FindGameObjectWithTag("Player");
-        cameraTurnSpeed = 1f/4;
+        cameraTurnSpeed = 1f/1.5f;
     }
 
     void Update()

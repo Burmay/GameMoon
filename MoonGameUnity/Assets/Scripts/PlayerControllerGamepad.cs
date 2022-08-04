@@ -65,7 +65,7 @@ public class PlayerControllerGamepad : MonoBehaviour
 
     void Move()
     {
-        playerController.Turn(move.x);
+        playerController.Turn(move.x, mode);
 
         if (move.y != 0)
         {

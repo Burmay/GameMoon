@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour
         rigidbody2D.rotation = -90;
 
         speed = 0;
-        _maxTurnSpeed = 45;
+        _maxTurnSpeed = 3;
         _turnBunus = 2;
         _maxSpeed = 10;
         _acceleration = 5;
@@ -46,40 +46,56 @@ public class PlayerController : MonoBehaviour
         target = GameObject.FindGameObjectWithTag("Player");
         wheelsRTag = GameObject.FindGameObjectWithTag("WheelsFR");
         wheelsLTag = GameObject.FindGameObjectWithTag("WheelsFL");
+
     }
 
-    public void Turn(float x)
+    public void Turn(float x, bool mode)
     {
-        //if (Math.Abs(speed) < _maxSpeed)
-        //{
-        //    _currentTurnSpeed = _maxTurnSpeed * Math.Abs(speed) / _maxSpeed;
-        //}
-        //else
-        //{
-        //    _currentTurnSpeed = _maxTurnSpeed;
-        //}
-        wheelsRTag.transform.rotation = Quaternion.Slerp(wheelsRTag.transform.rotation, Quaternion.Euler(0,0, 270 - maxAngleTurn * x), speedWheelsRotation * Time.fixedDeltaTime);
-        wheelsLTag.transform.rotation = Quaternion.Slerp(wheelsRTag.transform.rotation, Quaternion.Euler(0,0, 270 - maxAngleTurn * x), speedWheelsRotation * Time.fixedDeltaTime);
+        if(mode == false && Math.Abs(speed) < _maxSpeed)
+        {
+            _currentTurnSpeed = _maxTurnSpeed * Math.Abs(speed) / _maxSpeed;
+        }
 
-        Debug.Log(wheelsRTag.transform.rotation.eulerAngles.z);
+        else
+        {
+            _currentTurnSpeed = _maxTurnSpeed * 0.75f;
+        }
+        wheelsRTag.transform.localRotation = Quaternion.Slerp(wheelsRTag.transform.localRotation, Quaternion.Euler(0, 0, maxAngleTurn * -x), speedWheelsRotation * Time.fixedDeltaTime);
+        wheelsLTag.transform.localRotation = Quaternion.Slerp(wheelsRTag.transform.localRotation, Quaternion.Euler(0, 0, maxAngleTurn * -x), speedWheelsRotation * Time.fixedDeltaTime);
+
     }
 
     void TurnWhenDriving()
     {
-         if (wheelsRTag.transform.rotation.eulerAngles.z > 270)
+         Debug.Log(Math.Abs(wheelsRTag.transform.localRotation.eulerAngles.z));
+         if (wheelsRTag.transform.localRotation.eulerAngles.z > 180)
          {
-             rigidbody2D.rotation += Math.Abs(270 - wheelsRTag.transform.rotation.eulerAngles.z) * Time.fixedDeltaTime * _maxTurnSpeed;
+              if (speed > 0)
+              {
+                  transform.eulerAngles -= new Vector3(0, 0, Time.fixedDeltaTime * _currentTurnSpeed * (360 - wheelsRTag.transform.localRotation.eulerAngles.z));
+              }
+              else
+              {
+                  transform.eulerAngles += new Vector3(0, 0, Time.fixedDeltaTime * _currentTurnSpeed * (360 - wheelsRTag.transform.localRotation.eulerAngles.z));
+              }
          }
          else
          {
-             rigidbody2D.rotation += Math.Abs(270 - wheelsRTag.transform.rotation.eulerAngles.z) * Time.fixedDeltaTime * _maxTurnSpeed;
+              if(speed > 0)
+              {
+                  transform.eulerAngles += new Vector3(0, 0, Time.fixedDeltaTime * _currentTurnSpeed * wheelsRTag.transform.localRotation.eulerAngles.z);
+              }
+              else
+              {
+                  transform.eulerAngles -= new Vector3(0, 0, Time.fixedDeltaTime * _currentTurnSpeed * wheelsRTag.transform.localRotation.eulerAngles.z);
+              }
          }
     }
 
-    public void Riding(float y, bool mode)
+    public void Riding(float y, bool mode)  
     {
         //Debug.Log(speed + " " + y);
-        //TurnWhenDriving();
+        TurnWhenDriving();
         if(speed == 0)
         {
             if (y > 0)
