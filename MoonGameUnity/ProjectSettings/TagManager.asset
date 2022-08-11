@@ -45,3 +45,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BigObject
+    uniqueID: 3494661965
+    locked: 0
+  - name: SmallObject
+    uniqueID: 1342574143
+    locked: 0
